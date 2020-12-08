@@ -10,6 +10,7 @@
 #include <kern/console.h>
 #include <kern/monitor.h>
 #include <kern/kdebug.h>
+#include <kern/pmap.h>
 
 #define CMDBUF_SIZE	80	// enough for one VGA text line
 
@@ -25,6 +26,7 @@ static struct Command commands[] = {
 	{ "help", "Display this list of commands", mon_help },
 	{ "kerninfo", "Display information about the kernel", mon_kerninfo },
 	{ "backtrace", "Display information about the kernel", mon_backtrace },
+	{ "showva2pa", "Display the physical pages information corresponding to the designated virtual addresses", mon_showva2pa },
 };
 
 /***** Implementations of basic kernel monitor commands *****/
@@ -76,7 +78,66 @@ mon_backtrace(int argc, char **argv, struct Trapframe *tf)
 	return 0;
 }
 
+int
+mon_showva2pa(int argc, char **argv, struct Trapframe *tf)
+{
+	uintptr_t *va_low = NULL;
+	uintptr_t *va_high = NULL;
+	uintptr_t *va = NULL;
+	struct PageInfo *va_page = NULL;
+	pte_t *entry = NULL;
+	char *ptr;
+	unsigned int w, u;
 
+	if (argc == 1){
+		cprintf("At least one argument.\n");
+		return 0;
+	}
+	else if(argc >=4){
+		cprintf("Too many arguments (max %d)\n", 2);
+		return 0;
+	}
+	else if(argc == 2){
+		va_low = (uintptr_t *)strtol(argv[1], &ptr, 16);
+		va_high = (uintptr_t *)strtol(argv[1], &ptr, 16);
+	}
+	else if(argc == 3){
+		va_low = (uintptr_t *)strtol(argv[1], &ptr, 16);
+		va_high = (uintptr_t *)strtol(argv[2], &ptr, 16);
+		if (va_low > va_high){
+			va_low = (uintptr_t *)strtol(argv[2], &ptr, 16);
+			va_high = (uintptr_t *)strtol(argv[1], &ptr, 16);
+		}
+	}
+
+	for(va = va_low; va<=va_high; va++){
+		entry = pgdir_walk(kern_pgdir, (void *)va, 0);
+		if (entry == NULL){
+			cprintf("VA: %x does not have a mapped physical page!\n", va);
+			continue;
+		}
+
+		va_page = page_lookup(kern_pgdir, (void *)va, &entry);
+		if (va_page == NULL){
+			cprintf("VA: %x does not have a mapped physical page!\n", va);
+			continue;
+		}
+		else{
+			if (((*entry) & (PTE_W)) == PTE_W){
+				w = 1;
+			}
+			else w = 0;
+
+			if (((*entry) & (PTE_U)) == PTE_U){
+				u = 1;
+			}
+			else u = 0;
+
+			cprintf("VA: %x, PA: %x, pp_ref: %d, PTE_W: %d, PTE_U: %d\n", va, page2pa(va_page), va_page->pp_ref, w, u);
+		}
+	}
+	return 0;
+}
 
 /***** Kernel monitor command interpreter *****/
 
