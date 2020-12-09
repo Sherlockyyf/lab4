@@ -457,7 +457,10 @@ page_insert(pde_t *pgdir, struct PageInfo *pp, void *va, int perm)
 	// Fill this function in
 	pte_t *entry = NULL;
 	entry = pgdir_walk(pgdir, va, 1);
-	if(!entry) return -E_NO_MEM;
+	if(!entry){
+		cprintf("entry = NULL\n");
+		return -E_NO_MEM;
+	}
 	pp->pp_ref++;
 	if((*entry) & PTE_P){
 		tlb_invalidate(pgdir, va);
