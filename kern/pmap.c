@@ -298,7 +298,6 @@ page_alloc(int alloc_flags)
 	struct PageInfo *free_page;
 	// If page_free_list is NULL
 	if(!page_free_list){
-		cprintf("page_free_list is NULL!\n");
 		return NULL;
 	}
 	//
@@ -650,11 +649,9 @@ check_page_alloc(void)
 	fl = page_free_list;
 	cprintf("fi: %x\n", fl);
 	page_free_list = 0;
-	cprintf("3--------------------------------\n");
 
 	// should be no free memory
 	assert(!page_alloc(0));
-	cprintf("3.1--------------------------------\n");
 
 	// free and re-allocate?
 	page_free(pp0);
@@ -664,14 +661,10 @@ check_page_alloc(void)
 	assert((pp0 = page_alloc(0)));
 	assert((pp1 = page_alloc(0)));
 	assert((pp2 = page_alloc(0)));
-	cprintf("4--------------------------------\n");
 	assert(pp0);
 	assert(pp1 && pp1 != pp0);
 	assert(pp2 && pp2 != pp1 && pp2 != pp0);
-	cprintf("4.1--------------------------------\n");
 	assert(!page_alloc(0));
-	cprintf("5--------------------------------\n");
-
 
 	// test flags
 	memset(page2kva(pp0), 1, PGSIZE);
@@ -828,6 +821,7 @@ check_page(void)
 	// pp2 should NOT be on the free list
 	// could happen in ref counts are handled sloppily in page_insert
 	assert(!page_alloc(0));
+	cprintf("start--------------------------------\n");
 
 	// check that pgdir_walk returns a pointer to the pte
 	ptep = (pte_t *) KADDR(PTE_ADDR(kern_pgdir[PDX(PGSIZE)]));
@@ -844,6 +838,7 @@ check_page(void)
 	assert(page_insert(kern_pgdir, pp2, (void*) PGSIZE, PTE_W) == 0);
 	assert(*pgdir_walk(kern_pgdir, (void*) PGSIZE, 0) & PTE_W);
 	assert(!(*pgdir_walk(kern_pgdir, (void*) PGSIZE, 0) & PTE_U));
+	cprintf("1--------------------------------\n");
 
 	// should not be able to map at PTSIZE because need free page for page table
 	assert(page_insert(kern_pgdir, pp0, (void*) PTSIZE, PTE_W) < 0);
@@ -851,6 +846,7 @@ check_page(void)
 	// insert pp1 at PGSIZE (replacing pp2)
 	assert(page_insert(kern_pgdir, pp1, (void*) PGSIZE, PTE_W) == 0);
 	assert(!(*pgdir_walk(kern_pgdir, (void*) PGSIZE, 0) & PTE_U));
+	cprintf("2--------------------------------\n");
 
 	// should have pp1 at both 0 and PGSIZE, pp2 nowhere, ...
 	assert(check_va2pa(kern_pgdir, 0) == page2pa(pp1));
@@ -868,6 +864,7 @@ check_page(void)
 	assert(check_va2pa(kern_pgdir, PGSIZE) == page2pa(pp1));
 	assert(pp1->pp_ref == 1);
 	assert(pp2->pp_ref == 0);
+	cprintf("3--------------------------------\n");
 
 	// test re-inserting pp1 at PGSIZE
 	assert(page_insert(kern_pgdir, pp1, (void*) PGSIZE, 0) == 0);
@@ -883,6 +880,7 @@ check_page(void)
 
 	// so it should be returned by page_alloc
 	assert((pp = page_alloc(0)) && pp == pp1);
+	cprintf("end--------------------------------\n");
 
 	// should be no free memory
 	assert(!page_alloc(0));
