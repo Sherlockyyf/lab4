@@ -266,11 +266,9 @@ page_init(void)
 	for (i = 0; i < npages; i++) {
 		if (i == 0){
 			pages[i].pp_ref = 1;
-			cprintf("i=0\n");
 		}
 		else if (i >= npages_basemem && i < npages_basemem + num_iohole + num_alloc){
 			pages[i].pp_ref = 1;
-			cprintf("i >= npages_basemem && i < npages_basemem + num_iohole + num_alloc\n");
 		}
 		else{
 			cprintf("else\n");
