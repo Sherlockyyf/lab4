@@ -326,7 +326,7 @@ page_free(struct PageInfo *pp)
 	if (pp->pp_ref != 0 ){
 		panic("pp->pp_ref is nonzero!\n");
 	}
-	else if(!pp->pp_link){
+	else if(pp->pp_link){
 		panic("pp->pp_link is not NULL!\n");
 	}
 	else{
