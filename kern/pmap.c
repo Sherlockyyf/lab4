@@ -298,7 +298,7 @@ page_alloc(int alloc_flags)
 	struct PageInfo *free_page;
 	// If page_free_list is NULL
 	if(!page_free_list){
-		cprintf("page_free_list is NULL.");
+		cprintf("page_free_list is NULL.\n");
 		return NULL;
 	}
 	//
@@ -816,6 +816,7 @@ check_page(void)
 	assert(pp2->pp_ref == 1);
 
 	// should be no free memory
+	cprintf("2NULL--------------------------------\n");
 	assert(!page_alloc(0));
 
 	// should be able to map pp2 at PGSIZE because it's already there
