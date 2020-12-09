@@ -132,7 +132,6 @@ mem_init(void)
 	// create initial page directory.
 	kern_pgdir = (pde_t *) boot_alloc(PGSIZE);
 	memset(kern_pgdir, 0, PGSIZE);
-	cprintf("%x", kern_pgdir);
 
 	//////////////////////////////////////////////////////////////////////
 	// Recursively insert PD in itself as a page table, to form
@@ -262,9 +261,9 @@ page_init(void)
 	// The number of pages which has been allocated in the extended memory
 	int num_alloc = ((uint32_t)boot_alloc(0) - KERNBASE) / PGSIZE;
 	// The number of pages which has been allocated in the IO hole
-	int num_iohole = 96;
-	// KERNBASE / PGSIZE - npages_basemem;
-	cprintf("num_iohole: %d", num_iohole);
+	// int num_iohole = 96;
+	int num_iohole = KERNBASE / PGSIZE - npages_basemem;
+	cprintf("num_iohole: %d\n", num_iohole);
 
 	for (i = 0; i < npages; i++) {
 		if (i == 0){
