@@ -460,6 +460,7 @@ page_insert(pde_t *pgdir, struct PageInfo *pp, void *va, int perm)
 	if(!entry) return -E_NO_MEM;
 	pp->pp_ref++;
 	if((*entry) & PTE_P){
+		tlb_invalidate(pgdir, va);
 		page_remove(pgdir, va);
 	}
 	*entry = (page2pa(pp) | perm | PTE_P);
@@ -805,13 +806,11 @@ check_page(void)
 	assert(pp0->pp_ref == 1);
 
 	// should be able to map pp2 at PGSIZE because pp0 is already allocated for page table
-	cprintf("0000start--------------------------------\n");
 	assert(page_insert(kern_pgdir, pp2, (void*) PGSIZE, PTE_W) == 0);
 	assert(check_va2pa(kern_pgdir, PGSIZE) == page2pa(pp2));
 	assert(pp2->pp_ref == 1);
 
 	// should be no free memory
-	cprintf("1111start--------------------------------\n");
 	assert(!page_alloc(0));
 
 	// should be able to map pp2 at PGSIZE because it's already there
