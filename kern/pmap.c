@@ -162,6 +162,7 @@ mem_init(void)
 
 	check_page_free_list(1);
 	check_page_alloc();
+	cprintf("check pageeeeeeeeeeeeeeeeeeeeee\n");
 	check_page();
 
 	//////////////////////////////////////////////////////////////////////
@@ -647,7 +648,6 @@ check_page_alloc(void)
 
 	// temporarily steal the rest of the free pages
 	fl = page_free_list;
-	cprintf("fi: %x\n", fl);
 	page_free_list = 0;
 
 	// should be no free memory
@@ -776,6 +776,7 @@ check_page(void)
 
 	// should be able to allocate three pages
 	pp0 = pp1 = pp2 = 0;
+	cprintf("0000start--------------------------------\n");
 	assert((pp0 = page_alloc(0)));
 	assert((pp1 = page_alloc(0)));
 	assert((pp2 = page_alloc(0)));
