@@ -634,11 +634,9 @@ check_page_alloc(void)
 
 	// should be able to allocate three pages
 	pp0 = pp1 = pp2 = 0;
-	cprintf("1--------------------------------\n");
 	assert((pp0 = page_alloc(0)));
 	assert((pp1 = page_alloc(0)));
 	assert((pp2 = page_alloc(0)));
-	cprintf("2--------------------------------\n");
 
 	assert(pp0);
 	assert(pp1 && pp1 != pp0);
@@ -665,11 +663,12 @@ check_page_alloc(void)
 	assert((pp0 = page_alloc(0)));
 	assert((pp1 = page_alloc(0)));
 	assert((pp2 = page_alloc(0)));
+	cprintf("4--------------------------------\n");
 	assert(pp0);
 	assert(pp1 && pp1 != pp0);
 	assert(pp2 && pp2 != pp1 && pp2 != pp0);
 	assert(!page_alloc(0));
-	cprintf("4--------------------------------\n");
+
 
 	// test flags
 	memset(page2kva(pp0), 1, PGSIZE);
