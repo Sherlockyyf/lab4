@@ -382,6 +382,7 @@ pgdir_walk(pde_t *pgdir, const void *va, int create)
 			new_page = page_alloc(1);
 			// The allocation fails, pgdir_walk returns NULL
 			if(!new_page){
+				panic("The allocation fails");
 				return NULL;
 			}
 			// the new page's reference count is incremented
@@ -812,13 +813,13 @@ check_page(void)
 	assert(page_insert(kern_pgdir, pp2, (void*) PGSIZE, PTE_W) == 0);
 	assert(check_va2pa(kern_pgdir, PGSIZE) == page2pa(pp2));
 	assert(pp2->pp_ref == 1);
-	cprintf("pp2-ref: %d\n", pp2->pp_ref);
 
 	// should be no free memory
 	assert(!page_alloc(0));
 
 	// should be able to map pp2 at PGSIZE because it's already there
 	cprintf("818start--------------------------------\n");
+	cprintf("kern_pgdir: %x\n", kern_pgdir);
 	assert(page_insert(kern_pgdir, pp2, (void*) PGSIZE, PTE_W) == 0);
 	cprintf("820start--------------------------------\n");
 	assert(check_va2pa(kern_pgdir, PGSIZE) == page2pa(pp2));
