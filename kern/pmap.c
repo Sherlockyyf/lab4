@@ -263,6 +263,7 @@ page_init(void)
 	int num_alloc = ((uint32_t)boot_alloc(0) - KERNBASE) / PGSIZE;
 	// The number of pages which has been allocated in the IO hole
 	int num_iohole = KERNBASE / PGSIZE - npages_basemem;
+	cprintf("%d", num_iohole);
 
 	for (i = 0; i < npages; i++) {
 		if (i == 0){
