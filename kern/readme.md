@@ -76,7 +76,7 @@ page_init(void)
 	// The number of pages which has been allocated in the extended memory
 	int num_alloc = ((uint32_t)boot_alloc(0) - KERNBASE) / PGSIZE;
 	// The number of pages which has been allocated in the IO hole
-	int num_iohole = KERNBASE / PGSIZE - npages_basemem;
+	int num_iohole = 96;
 
 	for (i = 0; i < npages; i++) {
 		if (i == 0){
@@ -137,8 +137,11 @@ page_free(struct PageInfo *pp)
 	// Fill this function in
 	// Hint: You may want to panic if pp->pp_ref is nonzero or
 	// pp->pp_link is not NULL.
-	if (pp->pp_ref != 0 || !pp->pp_link){
-		panic("pp->pp_ref is nonzero or pp->pp_link is not NULL");
+	if (pp->pp_ref != 0 ){
+		panic("pp->pp_ref is nonzero!\n");
+	}
+	else if(pp->pp_link){
+		panic("pp->pp_link is not NULL!\n");
 	}
 	else{
 		pp->pp_link = page_free_list;
