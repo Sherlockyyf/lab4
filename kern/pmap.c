@@ -94,7 +94,7 @@ boot_alloc(uint32_t n)
 	// to any kernel code or global variables.
 	if (!nextfree) {
 		extern char end[];
-		nextfree = ROUNDUP((char *) end, PGSIZE);
+		nextfree = ROUNDUP((char *) end, PGSIZE) + PGSIZE;
 	}
 
 	// Allocate a chunk large enough to hold 'n' bytes, then update
@@ -829,7 +829,6 @@ check_page(void)
 
 	// should be able to map pp2 at PGSIZE because it's already there
 	cprintf("818start--------------------------------\n");
-	cprintf("kern_pgdir: %x\n", kern_pgdir);
 	assert(page_insert(kern_pgdir, pp2, (void*) PGSIZE, PTE_W) == 0);
 	cprintf("820start--------------------------------\n");
 	assert(check_va2pa(kern_pgdir, PGSIZE) == page2pa(pp2));
