@@ -804,6 +804,7 @@ check_page(void)
 	assert(page_insert(kern_pgdir, pp1, 0x0, PTE_W) < 0);
 
 	// free pp0 and try again: pp0 should be used for page table
+	cprintf("page_free start--------------------------------\n");
 	page_free(pp0);
 	cprintf("808start--------------------------------\n");
 	assert(page_insert(kern_pgdir, pp1, 0x0, PTE_W) == 0);
