@@ -132,6 +132,7 @@ mem_init(void)
 	// create initial page directory.
 	kern_pgdir = (pde_t *) boot_alloc(PGSIZE);
 	memset(kern_pgdir, 0, PGSIZE);
+	cprintf("135kern_pgdir: %x\n", kern_pgdir);
 
 	//////////////////////////////////////////////////////////////////////
 	// Recursively insert PD in itself as a page table, to form
@@ -141,6 +142,7 @@ mem_init(void)
 
 	// Permissions: kernel R, user R
 	kern_pgdir[PDX(UVPT)] = PADDR(kern_pgdir) | PTE_U | PTE_P;
+	cprintf("145kern_pgdir: %x\n", kern_pgdir);
 
 	//////////////////////////////////////////////////////////////////////
 	// Allocate an array of npages 'struct PageInfo's and store it in 'pages'.
@@ -151,6 +153,7 @@ mem_init(void)
 	// Your code goes here:
 	pages = (struct PageInfo *) boot_alloc(npages * sizeof(struct PageInfo));
 	memset(pages, 0, sizeof(pages));
+	cprintf("156kern_pgdir: %x\n", kern_pgdir);
 
 	//////////////////////////////////////////////////////////////////////
 	// Now that we've allocated the initial kernel data structures, we set
@@ -159,9 +162,12 @@ mem_init(void)
 	// particular, we can now map memory using boot_map_region
 	// or page_insert
 	page_init();
+	cprintf("165kern_pgdir: %x\n", kern_pgdir);
 
 	check_page_free_list(1);
+	cprintf("168kern_pgdir: %x\n", kern_pgdir);
 	check_page_alloc();
+	cprintf("170kern_pgdir: %x\n", kern_pgdir);
 	check_page();
 
 	//////////////////////////////////////////////////////////////////////
