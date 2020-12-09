@@ -634,9 +634,11 @@ check_page_alloc(void)
 
 	// should be able to allocate three pages
 	pp0 = pp1 = pp2 = 0;
+	cprintf("1--------------------------------\n");
 	assert((pp0 = page_alloc(0)));
 	assert((pp1 = page_alloc(0)));
 	assert((pp2 = page_alloc(0)));
+	cprintf("2--------------------------------\n");
 
 	assert(pp0);
 	assert(pp1 && pp1 != pp0);
@@ -645,9 +647,12 @@ check_page_alloc(void)
 	assert(page2pa(pp1) < npages*PGSIZE);
 	assert(page2pa(pp2) < npages*PGSIZE);
 
+
 	// temporarily steal the rest of the free pages
 	fl = page_free_list;
+	cprintf("fi: %x\n", fl);
 	page_free_list = 0;
+	cprintf("3--------------------------------\n");
 
 	// should be no free memory
 	assert(!page_alloc(0));
@@ -664,6 +669,7 @@ check_page_alloc(void)
 	assert(pp1 && pp1 != pp0);
 	assert(pp2 && pp2 != pp1 && pp2 != pp0);
 	assert(!page_alloc(0));
+	cprintf("4--------------------------------\n");
 
 	// test flags
 	memset(page2kva(pp0), 1, PGSIZE);
@@ -676,6 +682,7 @@ check_page_alloc(void)
 
 	// give free list back
 	page_free_list = fl;
+	cprintf("5--------------------------------\n");
 
 	// free the pages we took
 	page_free(pp0);
