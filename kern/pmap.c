@@ -812,6 +812,7 @@ check_page(void)
 	assert(page_insert(kern_pgdir, pp2, (void*) PGSIZE, PTE_W) == 0);
 	assert(check_va2pa(kern_pgdir, PGSIZE) == page2pa(pp2));
 	assert(pp2->pp_ref == 1);
+	cprintf("pp2-ref: %d\n", pp2->pp_ref);
 
 	// should be no free memory
 	assert(!page_alloc(0));
