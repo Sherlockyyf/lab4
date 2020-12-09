@@ -162,7 +162,6 @@ mem_init(void)
 
 	check_page_free_list(1);
 	check_page_alloc();
-	cprintf("check pageeeeeeeeeeeeeeeeeeeeee\n");
 	check_page();
 
 	//////////////////////////////////////////////////////////////////////
@@ -791,6 +790,7 @@ check_page(void)
 
 	// should be no free memory
 	assert(!page_alloc(0));
+	cprintf("1111start--------------------------------\n");
 
 	// there is no page allocated at address 0
 	assert(page_lookup(kern_pgdir, (void *) 0x0, &ptep) == NULL);
@@ -805,6 +805,7 @@ check_page(void)
 	assert(check_va2pa(kern_pgdir, 0x0) == page2pa(pp1));
 	assert(pp1->pp_ref == 1);
 	assert(pp0->pp_ref == 1);
+	cprintf("2222start--------------------------------\n");
 
 	// should be able to map pp2 at PGSIZE because pp0 is already allocated for page table
 	assert(page_insert(kern_pgdir, pp2, (void*) PGSIZE, PTE_W) == 0);
