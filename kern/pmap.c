@@ -298,6 +298,7 @@ page_alloc(int alloc_flags)
 	struct PageInfo *free_page;
 	// If page_free_list is NULL
 	if(!page_free_list){
+		cprintf("page_free_list is NULL!\n");
 		return NULL;
 	}
 	//
@@ -322,8 +323,11 @@ page_free(struct PageInfo *pp)
 	// Fill this function in
 	// Hint: You may want to panic if pp->pp_ref is nonzero or
 	// pp->pp_link is not NULL.
-	if (pp->pp_ref != 0 || !pp->pp_link){
-		panic("pp->pp_ref is nonzero or pp->pp_link is not NULL");
+	if (pp->pp_ref != 0 ){
+		panic("pp->pp_ref is nonzero!\n");
+	}
+	else if(!pp->pp_link){
+		panic("pp->pp_link is not NULL!\n");
 	}
 	else{
 		pp->pp_link = page_free_list;
