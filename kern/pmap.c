@@ -800,10 +800,12 @@ check_page(void)
 	assert(page_lookup(kern_pgdir, (void *) 0x0, &ptep) == NULL);
 
 	// there is no free memory, so we can't allocate a page table
+	cprintf("803start--------------------------------\n");
 	assert(page_insert(kern_pgdir, pp1, 0x0, PTE_W) < 0);
 
 	// free pp0 and try again: pp0 should be used for page table
 	page_free(pp0);
+	cprintf("808start--------------------------------\n");
 	assert(page_insert(kern_pgdir, pp1, 0x0, PTE_W) == 0);
 	assert(PTE_ADDR(kern_pgdir[0]) == page2pa(pp0));
 	assert(check_va2pa(kern_pgdir, 0x0) == page2pa(pp1));
@@ -811,6 +813,7 @@ check_page(void)
 	assert(pp0->pp_ref == 1);
 
 	// should be able to map pp2 at PGSIZE because pp0 is already allocated for page table
+	cprintf("816start--------------------------------\n");
 	assert(page_insert(kern_pgdir, pp2, (void*) PGSIZE, PTE_W) == 0);
 	assert(check_va2pa(kern_pgdir, PGSIZE) == page2pa(pp2));
 	assert(pp2->pp_ref == 1);
