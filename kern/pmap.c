@@ -802,6 +802,7 @@ check_page(void)
 	// there is no free memory, so we can't allocate a page table
 	cprintf("803start--------------------------------\n");
 	assert(page_insert(kern_pgdir, pp1, 0x0, PTE_W) < 0);
+	cprintf("page insert: %d\n", page_insert(kern_pgdir, pp1, 0x0, PTE_W));
 
 	// free pp0 and try again: pp0 should be used for page table
 	cprintf("page_free start--------------------------------\n");
