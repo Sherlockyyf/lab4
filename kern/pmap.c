@@ -298,6 +298,7 @@ page_alloc(int alloc_flags)
 	struct PageInfo *free_page;
 	// If page_free_list is NULL
 	if(!page_free_list){
+		cprintf("page_free_list is NULL.");
 		return NULL;
 	}
 	//
@@ -382,7 +383,7 @@ pgdir_walk(pde_t *pgdir, const void *va, int create)
 			new_page = page_alloc(1);
 			// The allocation fails, pgdir_walk returns NULL
 			if(!new_page){
-				panic("The allocation fails");
+				panic("The allocation fails.");
 				return NULL;
 			}
 			// the new page's reference count is incremented

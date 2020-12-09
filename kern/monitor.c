@@ -110,7 +110,7 @@ mon_showva2pa(int argc, char **argv, struct Trapframe *tf)
 		}
 	}
 
-	for(va = va_low; va<=va_high; va++){
+	for(va = va_low; va<=va_high; va+=1024){
 		entry = pgdir_walk(kern_pgdir, (void *)va, 0);
 		if (entry == NULL){
 			cprintf("VA: %x does not have a mapped physical page!\n", va);
@@ -133,7 +133,7 @@ mon_showva2pa(int argc, char **argv, struct Trapframe *tf)
 			}
 			else u = 0;
 
-			cprintf("VA: %x, PA: %x, pp_ref: %d, PTE_W: %d, PTE_U: %d\n", va, page2pa(va_page), va_page->pp_ref, w, u);
+			cprintf("VA: 0x%x, PA: 0x%x, pp_ref: %d, PTE_W: %d, PTE_U: %d\n", va, page2pa(va_page), va_page->pp_ref, w, u);
 		}
 	}
 	return 0;
