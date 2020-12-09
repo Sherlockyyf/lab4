@@ -654,6 +654,7 @@ check_page_alloc(void)
 
 	// should be no free memory
 	assert(!page_alloc(0));
+	cprintf("3.1--------------------------------\n");
 
 	// free and re-allocate?
 	page_free(pp0);
@@ -667,7 +668,9 @@ check_page_alloc(void)
 	assert(pp0);
 	assert(pp1 && pp1 != pp0);
 	assert(pp2 && pp2 != pp1 && pp2 != pp0);
+	cprintf("4.1--------------------------------\n");
 	assert(!page_alloc(0));
+	cprintf("5--------------------------------\n");
 
 
 	// test flags
@@ -681,7 +684,7 @@ check_page_alloc(void)
 
 	// give free list back
 	page_free_list = fl;
-	cprintf("5--------------------------------\n");
+
 
 	// free the pages we took
 	page_free(pp0);
