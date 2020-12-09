@@ -261,9 +261,7 @@ page_init(void)
 	// The number of pages which has been allocated in the extended memory
 	int num_alloc = ((uint32_t)boot_alloc(0) - KERNBASE) / PGSIZE;
 	// The number of pages which has been allocated in the IO hole
-	// int num_iohole = 96;
-	int num_iohole = KERNBASE / PGSIZE - npages_basemem;
-	cprintf("num_iohole: %d\n", num_iohole);
+	int num_iohole = 96;
 
 	for (i = 0; i < npages; i++) {
 		if (i == 0){
