@@ -383,7 +383,7 @@ pgdir_walk(pde_t *pgdir, const void *va, int create)
 			new_page = page_alloc(1);
 			// The allocation fails, pgdir_walk returns NULL
 			if(!new_page){
-				panic("The allocation fails.");
+				cprintf("The allocation fails.");
 				return NULL;
 			}
 			// the new page's reference count is incremented
