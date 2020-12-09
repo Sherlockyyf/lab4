@@ -271,7 +271,6 @@ page_init(void)
 			pages[i].pp_ref = 1;
 		}
 		else{
-			cprintf("else\n");
 			pages[i].pp_ref = 0;
 			pages[i].pp_link = page_free_list;
 			page_free_list = &pages[i];
