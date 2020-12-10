@@ -162,12 +162,9 @@ mem_init(void)
 	// particular, we can now map memory using boot_map_region
 	// or page_insert
 	page_init();
-	cprintf("165kern_pgdir: %x\n", kern_pgdir);
 
 	check_page_free_list(1);
-	cprintf("168kern_pgdir: %x\n", kern_pgdir);
 	check_page_alloc();
-	cprintf("170kern_pgdir: %x\n", kern_pgdir);
 	check_page();
 
 	//////////////////////////////////////////////////////////////////////
@@ -508,7 +505,7 @@ page_lookup(pde_t *pgdir, void *va, pte_t **pte_store)
 
 	va_page = pa2page(PTE_ADDR(*entry));
 
-	if(!pte_store){
+	if(pte_store){
 		*pte_store = entry;
 	}
 
