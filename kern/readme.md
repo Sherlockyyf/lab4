@@ -288,7 +288,7 @@ page_lookup(pde_t *pgdir, void *va, pte_t **pte_store)
 
 	va_page = pa2page(PTE_ADDR(*entry));
 
-	if(!pte_store){
+	if(pte_store){
 		*pte_store = entry;
 	}
 
@@ -417,6 +417,10 @@ page_insert(pde_t *pgdir, struct PageInfo *pp, void *va, int perm)
 	// Your code goes here:
 	boot_map_region(kern_pgdir, KERNBASE, 0xffffffff-KERNBASE, 0, PTE_W);
 ```
+## make grade截图
+![avatar](/kern/make%20grade.png)
+## showva2pa截图
+![avatar](/kern/showva2pa.png)
 # B. 问题回答
 (1)
 `boot/boot.S`中保护模式启动，第50行

@@ -133,6 +133,8 @@ mem_init(void)
 	kern_pgdir = (pde_t *) boot_alloc(PGSIZE);
 	memset(kern_pgdir, 0, PGSIZE);
 	cprintf("135kern_pgdir: %x\n", kern_pgdir);
+	cprintf("136pakern_pgdir: %x\n", PADDR(kern_pgdir));
+
 
 	//////////////////////////////////////////////////////////////////////
 	// Recursively insert PD in itself as a page table, to form
@@ -142,7 +144,6 @@ mem_init(void)
 
 	// Permissions: kernel R, user R
 	kern_pgdir[PDX(UVPT)] = PADDR(kern_pgdir) | PTE_U | PTE_P;
-	cprintf("145kern_pgdir: %x\n", kern_pgdir);
 
 	//////////////////////////////////////////////////////////////////////
 	// Allocate an array of npages 'struct PageInfo's and store it in 'pages'.
@@ -153,7 +154,6 @@ mem_init(void)
 	// Your code goes here:
 	pages = (struct PageInfo *) boot_alloc(npages * sizeof(struct PageInfo));
 	memset(pages, 0, sizeof(pages));
-	cprintf("156kern_pgdir: %x\n", kern_pgdir);
 
 	//////////////////////////////////////////////////////////////////////
 	// Now that we've allocated the initial kernel data structures, we set
@@ -301,7 +301,6 @@ page_alloc(int alloc_flags)
 	struct PageInfo *free_page;
 	// If page_free_list is NULL
 	if(!page_free_list){
-		cprintf("page_free_list is NULL.\n");
 		return NULL;
 	}
 	//
@@ -463,7 +462,6 @@ page_insert(pde_t *pgdir, struct PageInfo *pp, void *va, int perm)
 	pte_t *entry = NULL;
 	entry = pgdir_walk(pgdir, va, 1);
 	if(!entry){
-		cprintf("entry = NULL\n");
 		return -E_NO_MEM;
 	}
 	pp->pp_ref++;
@@ -784,7 +782,6 @@ check_page(void)
 
 	// should be able to allocate three pages
 	pp0 = pp1 = pp2 = 0;
-	cprintf("1： kern_pgdir: %x\n", kern_pgdir);
 	assert((pp0 = page_alloc(0)));
 	assert((pp1 = page_alloc(0)));
 	assert((pp2 = page_alloc(0)));
@@ -818,25 +815,19 @@ check_page(void)
 	// should be able to map pp2 at PGSIZE because pp0 is already allocated for page table
 	assert(page_insert(kern_pgdir, pp2, (void*) PGSIZE, PTE_W) == 0);
 	assert(check_va2pa(kern_pgdir, PGSIZE) == page2pa(pp2));
-	cprintf("2： kern_pgdir: %x\n", kern_pgdir);
 	assert(pp2->pp_ref == 1);
 
 	// should be no free memory
 	assert(!page_alloc(0));
 
 	// should be able to map pp2 at PGSIZE because it's already there
-	cprintf("818start--------------------------------\n");
 	assert(page_insert(kern_pgdir, pp2, (void*) PGSIZE, PTE_W) == 0);
-	cprintf("820start--------------------------------\n");
 	assert(check_va2pa(kern_pgdir, PGSIZE) == page2pa(pp2));
-	cprintf("822start--------------------------------\n");
 	assert(pp2->pp_ref == 1);
-	cprintf("3333start--------------------------------\n");
 
 	// pp2 should NOT be on the free list
 	// could happen in ref counts are handled sloppily in page_insert
 	assert(!page_alloc(0));
-	cprintf("start--------------------------------\n");
 
 	// check that pgdir_walk returns a pointer to the pte
 	ptep = (pte_t *) KADDR(PTE_ADDR(kern_pgdir[PDX(PGSIZE)]));
@@ -853,7 +844,6 @@ check_page(void)
 	assert(page_insert(kern_pgdir, pp2, (void*) PGSIZE, PTE_W) == 0);
 	assert(*pgdir_walk(kern_pgdir, (void*) PGSIZE, 0) & PTE_W);
 	assert(!(*pgdir_walk(kern_pgdir, (void*) PGSIZE, 0) & PTE_U));
-	cprintf("1--------------------------------\n");
 
 	// should not be able to map at PTSIZE because need free page for page table
 	assert(page_insert(kern_pgdir, pp0, (void*) PTSIZE, PTE_W) < 0);
@@ -861,8 +851,6 @@ check_page(void)
 	// insert pp1 at PGSIZE (replacing pp2)
 	assert(page_insert(kern_pgdir, pp1, (void*) PGSIZE, PTE_W) == 0);
 	assert(!(*pgdir_walk(kern_pgdir, (void*) PGSIZE, 0) & PTE_U));
-	cprintf("2--------------------------------\n");
-
 	// should have pp1 at both 0 and PGSIZE, pp2 nowhere, ...
 	assert(check_va2pa(kern_pgdir, 0) == page2pa(pp1));
 	assert(check_va2pa(kern_pgdir, PGSIZE) == page2pa(pp1));
@@ -879,8 +867,6 @@ check_page(void)
 	assert(check_va2pa(kern_pgdir, PGSIZE) == page2pa(pp1));
 	assert(pp1->pp_ref == 1);
 	assert(pp2->pp_ref == 0);
-	cprintf("3--------------------------------\n");
-
 	// test re-inserting pp1 at PGSIZE
 	assert(page_insert(kern_pgdir, pp1, (void*) PGSIZE, 0) == 0);
 	assert(pp1->pp_ref);
@@ -895,7 +881,6 @@ check_page(void)
 
 	// so it should be returned by page_alloc
 	assert((pp = page_alloc(0)) && pp == pp1);
-	cprintf("end--------------------------------\n");
 
 	// should be no free memory
 	assert(!page_alloc(0));
